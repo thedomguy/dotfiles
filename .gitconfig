@@ -1,1 +1,75 @@
-/Users/rahul.bhatt/.gitconfig
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+[color]
+	ui = true
+[core]
+	autocrlf = input
+	editor = nvim
+[pull]
+	rebase = true
+[alias]
+    mr = !sh -c 'git fetch $1 merge-requests/$2/head:mr-$1-$2 && git checkout mr-$1-$2' -
+	sync = "!f() { \
+    echo 'Fetching latest remote information...'; \
+    git fetch --prune; \
+\
+    echo 'Identifying branches to clean up...'; \
+    branches_to_delete=$(git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" { print $1 }'); \
+\
+    if [ -z \"$branches_to_delete\" ]; then \
+        echo '✅ All local branches are in sync with remote. Nothing to clean up.'; \
+        return 0; \
+    fi; \
+\
+    echo ''; \
+    echo '📋 The following local branches track remote branches that no longer exist:'; \
+    echo \"$branches_to_delete\" | sed 's/^/  - /'; \
+    echo ''; \
+    echo '⚠️  These branches will be deleted from your local repository.'; \
+    echo 'Press ENTER to continue, or Ctrl+C to cancel...'; \
+    read; \
+\
+    echo ''; \
+    echo '🗑️  Deleting branches...'; \
+    echo \"$branches_to_delete\" | while read branch; do \
+        if [ -n \"$branch\" ]; then \
+            current_branch=$(git branch --show-current); \
+            if [ \"$branch\" = \"$current_branch\" ]; then \
+                echo \"⚠️  Skipping $branch (currently checked out). Please switch to another branch first.\"; \
+            else \
+                echo \"  Deleting: $branch\"; \
+                git branch -D \"$branch\"; \
+            fi; \
+        fi; \
+    done; \
+\
+    echo ''; \
+    echo '✅ Branch cleanup complete!'; \
+}; f"
+	local = log --oneline --graph --decorate --branches --not --remotes
+[init]
+	defaultBranch = main
+[fetch]
+	prune = true
+[push]
+	autoSetupRemote = true
+[url "git@gitlab.com:"]
+	insteadOf = https://gitlab.com/
+
+# --- NEW SECTION ---
+# Load work config when in the ~/work/ directory (Datamatics default)
+[includeIf "gitdir:~/work/"]
+    path = ~/.gitconfig-work
+
+# IOM-PRIMA-Frontend on Azure: override Datamatics with IOM identity (main + worktrees)
+[includeIf "gitdir:~/work/iom-prima/IOM-PRIMA-Frontend/"]
+    path = ~/.gitconfig-iom-prima
+
+# Load personal config when in the ~/personal/ directory
+[includeIf "gitdir:~/personal/"]
+	path = /Users/rahul.bhatt/personal/.gitconfig
+[credential]
+	helper = !gh auth git-credential

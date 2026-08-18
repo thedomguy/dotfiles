@@ -1,22 +1,22 @@
 #!/bin/bash
 
-# This script symlinks the dotfiles to the current directory.
+# Creates symlinks in ~ pointing to files in this dotfiles repo.
+# Source of truth lives in the repo; home directory gets symlinks.
 
-TARGET_DIR="/Users/rahul.bhatt/personal/dotfiles"
+DOTFILES_DIR="/Users/rahul.bhatt/personal/dotfiles"
 
-# Function to create a symlink, asking for confirmation if it exists
 symlink_file() {
-  local source_file="$1"
-  local dest_file="$2"
+  local source_file="$1"  # file in dotfiles repo
+  local dest_file="$2"    # symlink location in home
 
   if [ -e "$dest_file" ] || [ -L "$dest_file" ]; then
-    read -p "Symlink for $(basename "$source_file") at $dest_file already exists. Overwrite? (y/n) " -n 1 -r
+    read -p "$(basename "$dest_file") already exists at $dest_file. Overwrite? (y/n) " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
       ln -sf "$source_file" "$dest_file"
       echo "Overwrote symlink: $dest_file -> $source_file"
     else
-      echo "Skipped symlink: $dest_file"
+      echo "Skipped: $dest_file"
     fi
   else
     ln -s "$source_file" "$dest_file"
@@ -24,55 +24,18 @@ symlink_file() {
   fi
 }
 
-# List of files to symlink
-source_files=(
-  "/Users/rahul.bhatt/.aerospace.toml"
-  "/Users/rahul.bhatt/.bash_profile"
-  "/Users/rahul.bhatt/.bashrc"
-  "/Users/rahul.bhatt/.gitconfig"
-  "/Users/rahul.bhatt/.gitconfig-work"
-  "/Users/rahul.bhatt/.gitconfig.backup"
-  "/Users/rahul.bhatt/.ideavimrc"
-  "/Users/rahul.bhatt/.profile"
-  "/Users/rahul.bhatt/.tmux.conf"
-  "/Users/rahul.bhatt/.vimrc"
-  "/Users/rahul.bhatt/.zshrc"
-  "/Users/rahul.bhatt/.nvm/.dockerignore"
-  "/Users/rahul.bhatt/.nvm/.editorconfig"
-  "/Users/rahul.bhatt/.nvm/.gitattributes"
-  "/Users/rahul.bhatt/.nvm/.gitignore"
-  "/Users/rahul.bhatt/.nvm/.mailmap"
-  "/Users/rahul.bhatt/.nvm/.travis.yml"
-  "/Users/rahul.bhatt/personal/.env"
-  "/Users/rahul.bhatt/personal/.gitconfig"
-)
-
-dest_names=(
-  ".aerospace.toml"
-  ".bash_profile"
-  ".bashrc"
-  ".gitconfig"
-  ".gitconfig-work"
-  ".gitconfig.backup"
-  ".ideavimrc"
-  ".profile"
-  ".tmux.conf"
-  ".vimrc"
-  ".zshrc"
-  "nvm.dockerignore"
-  "nvm.editorconfig"
-  "nvm.gitattributes"
-  "nvm.gitignore"
-  "nvm.mailmap"
-  "nvm.travis.yml"
-  "personal.env"
-  "personal.gitconfig"
-)
-
-for i in "${!source_files[@]}"; do
-  source_file="${source_files[$i]}"
-  dest_name="${dest_names[$i]}"
-  symlink_file "$source_file" "$TARGET_DIR/$dest_name"
-done
+# Pairs: dotfiles repo file -> home destination
+symlink_file "$DOTFILES_DIR/.aerospace.toml"    "/Users/rahul.bhatt/.aerospace.toml"
+symlink_file "$DOTFILES_DIR/.bash_profile"      "/Users/rahul.bhatt/.bash_profile"
+symlink_file "$DOTFILES_DIR/.bashrc"            "/Users/rahul.bhatt/.bashrc"
+symlink_file "$DOTFILES_DIR/.gitconfig"         "/Users/rahul.bhatt/.gitconfig"
+symlink_file "$DOTFILES_DIR/.gitconfig-work"    "/Users/rahul.bhatt/.gitconfig-work"
+symlink_file "$DOTFILES_DIR/.gitconfig.backup"  "/Users/rahul.bhatt/.gitconfig.backup"
+symlink_file "$DOTFILES_DIR/.ideavimrc"         "/Users/rahul.bhatt/.ideavimrc"
+symlink_file "$DOTFILES_DIR/.profile"           "/Users/rahul.bhatt/.profile"
+symlink_file "$DOTFILES_DIR/.tmux.conf"         "/Users/rahul.bhatt/.tmux.conf"
+symlink_file "$DOTFILES_DIR/.vimrc"             "/Users/rahul.bhatt/.vimrc"
+symlink_file "$DOTFILES_DIR/.zshrc"             "/Users/rahul.bhatt/.zshrc"
+symlink_file "$DOTFILES_DIR/personal.gitconfig" "/Users/rahul.bhatt/personal/.gitconfig"
 
 echo "Done."

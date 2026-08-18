@@ -1,1 +1,5 @@
-/Users/rahul.bhatt/.gitconfig-work
+[user]
+    name = Rahul Bhatt
+    email = rahul.bhatt@datamatics.com
+[core]
+    sshCommand = ssh -o IdentitiesOnly=yes -i ~/.ssh/id_ed25519_datamatics_git

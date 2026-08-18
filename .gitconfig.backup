@@ -1,1 +1,28 @@
-/Users/rahul.bhatt/.gitconfig.backup
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+[color]
+	ui = true
+[core]
+	autocrlf = input
+[pull]
+	rebase = true
+[alias]
+    mr = !sh -c 'git fetch $1 merge-requests/$2/head:mr-$1-$2 && git checkout mr-$1-$2' -
+	sync = "!f() {\n    echo \"Fetching latest remote information...\"\n    git fetch --prune\n    \n    echo \"Identifying branches to clean up...\"\n    # Get list of local branches that track remote branches that no longer exist\n    branches_to_delete=$(git for-each-ref --format=\"%(refname:short) %(upstream:track)\" refs/heads | awk '$2 == \"[gone]\" { print $1 }')\n\nif [ -z \"$branches_to_delete\" ]; then\necho \"✅ All local branches are in sync with remote. Nothing to clean up.\"\nreturn 0\nfi\n\necho \"\"\necho \"📋 The following local branches track remote branches that no longer exist:\"\necho \"$branches_to_delete\" | sed \"s/^/  - /\"\necho \"\"\necho \"⚠️  These branches will be deleted from your local repository.\"\necho \"Press ENTER to continue, or Ctrl+C to cancel...\"\nread\n\necho \"\"\necho \"🗑️  Deleting branches...\"\necho \"$branches_to_delete\" | while read branch; do\nif [ -n \"$branch\" ]; then\ncurrent_branch=$(git branch --show-current)\nif [ \"$branch\" = \"$current_branch\" ]; then\necho \"⚠️  Skipping $branch (currently checked out). Please switch to another branch first.\"\nelse\necho \"  Deleting: $branch\"\ngit branch -D \"$branch\"\nfi\nfi\ndone\n\necho \"\"\necho \"✅ Branch cleanup complete!\"\n}; f"
+	local = log --oneline --graph --decorate --branches --not --remotes
+[user]
+	name = Rahul Bhatt
+	email = rahul.bhatt@datamatics.com
+[includeIf "gitdir:/Users/rahul.bhatt/personal/"]
+	path = /Users/rahul.bhatt/personal/.gitconfig
+[init]
+	defaultBranch = main
+[fetch]
+	prune = true
+[push]
+	autoSetupRemote = true
+[url "git@gitlab.com:"]
+	insteadOf = https://gitlab.com/
