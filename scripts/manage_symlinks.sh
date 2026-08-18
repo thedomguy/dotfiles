@@ -38,4 +38,15 @@ symlink_file "$DOTFILES_DIR/.vimrc"             "/Users/rahul.bhatt/.vimrc"
 symlink_file "$DOTFILES_DIR/.zshrc"             "/Users/rahul.bhatt/.zshrc"
 symlink_file "$DOTFILES_DIR/personal.gitconfig" "/Users/rahul.bhatt/personal/.gitconfig"
 
+# Pairs: dotfiles repo dir -> ~/.config destination
+CONFIG_DIR="/Users/rahul.bhatt/.config"
+for name in PureRef alacritty cmux fish flipper gh ghostty git iterm2 jgit \
+            karabiner lf nvim sketchybar sketchybar.bak uv waveterm zed zellij; do
+  symlink_file "$DOTFILES_DIR/$name" "$CONFIG_DIR/$name"
+done
+
+# Not managed here (see .gitignore / README for why): coc, configstore,
+# github-copilot, glab-cli, joplin-desktop, raycast, simple-update-notifier
+# — either hold secrets or are pure regenerable cache.
+
 echo "Done."

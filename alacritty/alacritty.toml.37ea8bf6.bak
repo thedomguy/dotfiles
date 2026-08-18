@@ -1,0 +1,54 @@
+[colors.cursor]
+cursor = "#528bff"
+text = "CellBackground"
+
+[colors.normal]
+black = "#5c6370"
+blue = "#61afef"
+cyan = "#56b6c2"
+green = "#98c379"
+magenta = "#c678dd"
+red = "#e06c75"
+white = "#828997"
+yellow = "#e5c07b"
+
+[colors.primary]
+background = "#0d2a34"
+foreground = "#869395"
+
+[colors.selection]
+background = "#163540"
+foreground = "#95a0a0"
+text = "CellForeground"
+
+[font]
+size = 16
+
+[font.bold]
+family = "FiraCode Nerd Font Mono"
+style = "Bold"
+
+[font.bold_italic]
+family = "FiraCode Nerd Font Mono"
+style = "Bold Italic"
+
+[font.italic]
+family = "FiraCode Nerd Font Mono"
+style = "Italic"
+
+[font.normal]
+family = "FiraCode Nerd Font Mono"
+style = "Regular"
+
+[window]
+dynamic_padding = true
+opacity = 0.8
+blur = true 
+
+[window.padding]
+x = 4
+y = 4
+
+[scrolling]
+history = 10000
+multiplier = 3

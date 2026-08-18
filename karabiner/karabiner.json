@@ -1,0 +1,10 @@
+{
+    "profiles": [
+        {
+            "complex_modifications": { "parameters": { "basic.to_if_alone_timeout_milliseconds": 500 } },
+            "name": "Default profile",
+            "selected": true,
+            "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
+        }
+    ]
+}
