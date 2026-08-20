@@ -25,8 +25,37 @@ function display --description "Switch display layout: extend | mirror | retina 
             | tee -a $argv[3]
     end
 
+    # Detects the live layout so extend/mirror/retina can skip a switch
+    # that's already in place. Mirror and retina both drive the ULTRA1+MB
+    # pair as a mirrored bundle (same origin) — the resolution tells them
+    # apart: retina drives at the MacBook's native 1728x1080, mirror drives
+    # at the ultrawide's 3440x1440.
+    function __display_mode -a dp_list has_ultra1
+        if test $has_ultra1 -eq 0
+            echo macbook-only
+            return
+        end
+        set u1_origin (echo $dp_list | grep -A5 "s809841995" | grep "Origin" | string match -r '\(.*?\)')
+        set mb_origin (echo $dp_list | grep -A5 "s4251086178" | grep "Origin" | string match -r '\(.*?\)')
+        if test "$u1_origin" != "$mb_origin"
+            echo extend
+            return
+        end
+        set mb_res (echo $dp_list | grep -A5 "s4251086178" | grep "Resolution" | string match -r '\d+x\d+')
+        if test "$mb_res" = "1728x1080"
+            echo retina
+        else
+            echo mirror
+        end
+    end
+
     switch $argv[1]
         case extend
+            set -l mode (__display_mode $dp_list $has_ultra1)
+            if test "$mode" = extend
+                echo "Already in extend — nothing to do"
+                return 0
+            end
             if test $has_ultra1 -eq 1
                 echo "Switching to: extend (all connected displays)"
                 __log_brightness "extend PRE" $BRIGHTNESS $LOGFILE
@@ -65,6 +94,11 @@ function display --description "Switch display layout: extend | mirror | retina 
             end
 
         case mirror
+            set -l mode (__display_mode $dp_list $has_ultra1)
+            if test "$mode" = mirror
+                echo "Already in mirror — nothing to do"
+                return 0
+            end
             if test $has_ultra1 -eq 1
                 echo "Switching to: mirror (MacBook + ultrawide mirrored)"
                 __log_brightness "mirror PRE" $BRIGHTNESS $LOGFILE
@@ -95,6 +129,11 @@ function display --description "Switch display layout: extend | mirror | retina 
             end
 
         case retina
+            set -l mode (__display_mode $dp_list $has_ultra1)
+            if test "$mode" = retina
+                echo "Already in retina — nothing to do"
+                return 0
+            end
             echo "Switching to: retina only (MacBook primary, externals mirrored)"
             __log_brightness "retina PRE" $BRIGHTNESS $LOGFILE
             python3 $BRIGHTNESS get 2>/dev/null > $MB_SAVE
@@ -115,19 +154,15 @@ function display --description "Switch display layout: extend | mirror | retina 
             __log_brightness "retina POST" $BRIGHTNESS $LOGFILE
 
         case status
-            set disabled (echo $dp_list | grep "Enabled: false" | wc -l | string trim)
-            if test $disabled -gt 0
-                echo "Current mode: retina (externals disabled)"
-            else if test $has_ultra1 -eq 1
-                set u1_origin (echo $dp_list | grep -A5 "s809841995" | grep "Origin" | string match -r '\(.*?\)')
-                set mb_origin (echo $dp_list | grep -A5 "s4251086178" | grep "Origin" | string match -r '\(.*?\)')
-                if test "$u1_origin" = "$mb_origin"
+            switch (__display_mode $dp_list $has_ultra1)
+                case retina
+                    echo "Current mode: retina (MacBook native, externals mirrored)"
+                case mirror
                     echo "Current mode: mirror"
-                else
+                case extend
                     echo "Current mode: extend"
-                end
-            else
-                echo "Current mode: MacBook only (no externals connected)"
+                case macbook-only
+                    echo "Current mode: MacBook only (no externals connected)"
             end
             echo $dp_list | grep -E "^(Type|Resolution|Origin|Enabled):"
             echo ""

@@ -68,3 +68,7 @@ abbr -a warp_db 'sqlite3 ~/Library/Application\ Support/dev.warp.Warp-Stable/war
 # Misc
 abbr -a interval '/Users/rahul.bhatt/personal/bash/interval_executor.sh'
 abbr -a ch 'cheat'
+
+# Display layout (see `display.fish` — extend/mirror/retina/status/log)
+abbr -a de 'display extend'
+abbr -a dm 'display mirror'
