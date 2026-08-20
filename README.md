@@ -89,3 +89,7 @@ excluded via `.gitignore` and never committed:
 …) for quick recall in the terminal — see `cheat -l` / `cheat <topic>` /
 `cheat -e <topic>` (defined in `fish/functions/cheat.fish`). Feel free to
 have an AI coding assistant keep these current as workflows change.
+
+- [fish](cheatsheets/fish.md)
+- [git](cheatsheets/git.md)
+- [_template](cheatsheets/_template.md) — scaffold for a new topic
