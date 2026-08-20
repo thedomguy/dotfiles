@@ -30,6 +30,14 @@ function display --description "Switch display layout: extend | mirror | retina 
     # pair as a mirrored bundle (same origin) — the resolution tells them
     # apart: retina drives at the MacBook's native 1728x1080, mirror drives
     # at the ultrawide's 3440x1440.
+    #
+    # Callers must pass dp_list as `(string join \n -- $dp_list | string collect)`,
+    # not the bare list var: fish re-splits command substitutions on
+    # newlines even when captured into one string, so without `string
+    # collect` it arrives here as many positional args instead of one
+    # blob — and without `string join \n` first, `echo $dp_list` inside
+    # this function joins list elements with spaces, destroying the line
+    # structure `grep -A5` needs to isolate a screen's block.
     function __display_mode -a dp_list has_ultra1
         if test $has_ultra1 -eq 0
             echo macbook-only
@@ -51,7 +59,7 @@ function display --description "Switch display layout: extend | mirror | retina 
 
     switch $argv[1]
         case extend
-            set -l mode (__display_mode $dp_list $has_ultra1)
+            set -l mode (__display_mode (string join \n -- $dp_list | string collect) $has_ultra1)
             if test "$mode" = extend
                 echo "Already in extend — nothing to do"
                 return 0
@@ -94,7 +102,7 @@ function display --description "Switch display layout: extend | mirror | retina 
             end
 
         case mirror
-            set -l mode (__display_mode $dp_list $has_ultra1)
+            set -l mode (__display_mode (string join \n -- $dp_list | string collect) $has_ultra1)
             if test "$mode" = mirror
                 echo "Already in mirror — nothing to do"
                 return 0
@@ -129,7 +137,7 @@ function display --description "Switch display layout: extend | mirror | retina 
             end
 
         case retina
-            set -l mode (__display_mode $dp_list $has_ultra1)
+            set -l mode (__display_mode (string join \n -- $dp_list | string collect) $has_ultra1)
             if test "$mode" = retina
                 echo "Already in retina — nothing to do"
                 return 0
@@ -154,7 +162,7 @@ function display --description "Switch display layout: extend | mirror | retina 
             __log_brightness "retina POST" $BRIGHTNESS $LOGFILE
 
         case status
-            switch (__display_mode $dp_list $has_ultra1)
+            switch (__display_mode (string join \n -- $dp_list | string collect) $has_ultra1)
                 case retina
                     echo "Current mode: retina (MacBook native, externals mirrored)"
                 case mirror
@@ -164,7 +172,7 @@ function display --description "Switch display layout: extend | mirror | retina 
                 case macbook-only
                     echo "Current mode: MacBook only (no externals connected)"
             end
-            echo $dp_list | grep -E "^(Type|Resolution|Origin|Enabled):"
+            string join \n -- $dp_list | grep -E "^(Type|Resolution|Origin|Enabled):"
             echo ""
             set mb_now  (python3 $BRIGHTNESS get 2>/dev/null)
             set ddc_now (m1ddc get luminance 2>/dev/null)
