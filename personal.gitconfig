@@ -3,3 +3,7 @@
     email = rbhatt800@gmail.com 
 [core]
     sshCommand = ssh -i ~/.ssh/id_ed25519_github_personal -o IdentitiesOnly=yes
+# HTTPS remotes would authenticate via the global credential chain (work
+# account); route thedomguy repos over SSH with the personal key instead.
+[url "git@github.com-personal:thedomguy/"]
+    insteadOf = https://github.com/thedomguy/
