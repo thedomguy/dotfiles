@@ -12,9 +12,7 @@ set -gx GH_PAGER cat    # Set GitHub CLI pager to cat
 set -gx EDITOR nvim     # Used by git, kubectl, less-edit, etc.
 set -gx VISUAL nvim     # Full-screen editor preference
 # Make plain `vi` / `vim` open Neovim too
-alias vi 'nvim'
-alias vim 'nvim'
-alias ll 'ls -lAh'                 # List with details and human-readable sizes
+# (vi, vim, ll moved to abbrs.fish)
 
 function llgrep
     if test (count $argv) -eq 0
@@ -32,7 +30,7 @@ end
 # =====================
 # Common Utilities
 # =====================
-alias code 'open -a "Visual Studio Code"' # Open VS Code
+# code moved to abbrs.fish
 
 # =====================
 # Reusable Functions
@@ -110,8 +108,7 @@ end
 # safe_add_path /usr/local/opt/python@3.10/bin
 
 # Python and pip aliases
-alias python='python3'
-alias pip='pip3'
+# (python and pip moved to abbrs.fish)
 
 # Project/directory jumps and warp_logs/warp_data/warp_db moved to
 # conf.d/abbrs.fish as abbreviations.
@@ -222,7 +219,7 @@ function lfcd
         end
     end
 end
-alias lf lfcd
+# lf moved to abbrs.fish
 
 function adb-reverse-physical
     set devices (adb devices | tail -n +2 | awk '{print $1}')

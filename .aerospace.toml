@@ -132,10 +132,10 @@ on-mode-changed = []
     alt-comma = 'layout accordion horizontal vertical'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-    alt-h = 'focus left'
+    alt-h = 'focus --boundaries-action wrap-around-the-workspace left'
     alt-j = 'focus down'
     alt-k = 'focus up'
-    alt-l = 'focus right'
+    alt-l = 'focus --boundaries-action wrap-around-the-workspace right'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move
     alt-shift-h = 'move left'
@@ -217,18 +217,14 @@ on-mode-changed = []
     # Custom quit command to cleanup borders and exit AeroSpace
     q = ['exec-and-forget killall borders', 'exec-and-forget killall AeroSpace']
 
+# Sign-in windows spawned by apps and browsers (e.g. "Sign in - Google Accounts").
+# \b word boundaries keep this off Design / assign / signature.
 [[on-window-detected]]
-# if.app-id = "com.google.Chrome"
-if.window-title-regex-substring = "Sign in"
-# if.window-title-regex-substring = "Bitwarden"
-run = ["layout floating"]
+if.window-title-regex-substring = '(?i)\bsign[ -]?in\b'
+run = ['layout floating']
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'teams'
-run = 'layout floating'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'word'
 run = 'layout floating'
 
 [[on-window-detected]]
@@ -297,10 +293,6 @@ run = 'layout floating'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'finder'
-run = 'layout floating'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Sign in'
 run = 'layout floating'
 
 [[on-window-detected]]

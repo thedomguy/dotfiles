@@ -16,3 +16,24 @@ export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 # Added by Antigravity CLI installer
 export PATH="/Users/rahul.bhatt/.local/bin:$PATH"
+
+# >>> iom-prima-word-smart-doc >>>
+# One-shot alias for Word Smart Document servers (script lives in .local).
+export IOM_WSD_SPAWN="/Users/rahul.bhatt/work/iom-prima/.local/word-smart-doc/spawn.sh"
+alias wsd="$IOM_WSD_SPAWN"
+_iom_wsd_chpwd() {
+  case "$PWD/" in
+    /Users/rahul.bhatt/work/iom-prima/.worktrees/*)
+      alias wsd-up="$IOM_WSD_SPAWN up"
+      alias wsd-down="$IOM_WSD_SPAWN down"
+      alias wsd-status="$IOM_WSD_SPAWN status"
+      ;;
+    *)
+      unalias wsd-up wsd-down wsd-status 2>/dev/null || true
+      ;;
+  esac
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook chpwd _iom_wsd_chpwd
+_iom_wsd_chpwd
+# <<< iom-prima-word-smart-doc <<<
