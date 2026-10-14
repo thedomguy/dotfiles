@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>dev.domguy.display-auto-mirror</string>
+    <!-- Watches for login, wake and display connect/disconnect, and runs
+         scripts/display-auto-mirror.sh on each (see display-watcher.swift). -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/rahul.bhatt/.local/bin/display-watcher</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/tmp/display-auto-mirror.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/display-auto-mirror.log</string>
+</dict>
+</plist>

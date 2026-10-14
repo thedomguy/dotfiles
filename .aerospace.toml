@@ -228,6 +228,10 @@ if.app-name-regex-substring = 'teams'
 run = 'layout floating'
 
 [[on-window-detected]]
+if.app-name-regex-substring = 'word'
+run = 'layout floating'
+
+[[on-window-detected]]
 if.app-name-regex-substring = 'excel'
 run = 'layout floating'
 
@@ -309,12 +313,13 @@ if.during-aerospace-startup = false
 check-further-callbacks = true
 run = 'layout tiling'   
 
-[[on-window-detected]]
-if.window-title-regex-substring = 'sign'
-run = 'layout floating'
-
 # Windows App (Microsoft Remote Desktop) — float all windows so AeroSpace
 # never tiles or repositions them; preserves native Windows App behaviour.
 [[on-window-detected]]
 if.app-id = 'com.microsoft.rdc.macos'
+run = 'layout floating'
+
+
+[[on-window-detected]]
+if.window-title-regex-substring = 'LocalSend'
 run = 'layout floating'

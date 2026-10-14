@@ -25,6 +25,28 @@ function display --description "Switch display layout: extend | mirror | retina 
             | tee -a $argv[3]
     end
 
+    # Saves the current levels so `extend` can restore them. Skips values that
+    # are already dimmed, so a repeat call never overwrites a good save with 0.
+    function __save_brightness -a brightness mb_save ddc_save
+        set mb_cur (python3 $brightness get 2>/dev/null)
+        if python3 -c "exit(0 if float('$mb_cur') > 0.01 else 1)" 2>/dev/null
+            echo $mb_cur > $mb_save
+        end
+        set ddc_cur (m1ddc get luminance 2>/dev/null)
+        if test "$ddc_cur" -gt 1 2>/dev/null
+            echo $ddc_cur > $ddc_save
+        end
+    end
+
+    # Mirror's brightness state: MacBook at 0, Samsung at its saved level.
+    # Sync stays off. Re-enabling it would let MC see the mismatch and dim
+    # Samsung; `display extend` restores it once brightness is back to normal.
+    function __dim_mb -a brightness ddc_save mc_domain
+        defaults write $mc_domain enableBrightnessSync -bool false
+        python3 $brightness set 0
+        m1ddc set luminance (cat $ddc_save) >/dev/null 2>&1
+    end
+
     # Detects the live layout so extend/mirror/retina can skip a switch
     # that's already in place. Mirror and retina both drive the ULTRA1+MB
     # pair as a mirrored bundle (same origin) — the resolution tells them
@@ -103,33 +125,26 @@ function display --description "Switch display layout: extend | mirror | retina 
 
         case mirror
             set -l mode (__display_mode (string join \n -- $dp_list | string collect) $has_ultra1)
-            if test "$mode" = mirror
-                echo "Already in mirror — nothing to do"
-                return 0
-            end
             if test $has_ultra1 -eq 1
-                echo "Switching to: mirror (MacBook + ultrawide mirrored)"
+                # Layout and brightness are separate: macOS can restore the
+                # mirrored layout (login, wake) but relight the built-in panel,
+                # so only the layout switch is skipped when already mirrored.
+                if test "$mode" = mirror
+                    echo "Already in mirror — making sure the MacBook panel is dimmed"
+                else
+                    echo "Switching to: mirror (MacBook + ultrawide mirrored)"
+                end
                 __log_brightness "mirror PRE" $BRIGHTNESS $LOGFILE
 
-                # Save current brightness before mirroring — only if non-zero, so we
-                # don't overwrite a valid saved value with an already-dimmed state
-                set mb_cur (python3 $BRIGHTNESS get 2>/dev/null)
-                if python3 -c "exit(0 if float('$mb_cur') > 0.01 else 1)" 2>/dev/null
-                    echo $mb_cur > $MB_SAVE
-                end
-                set ddc_cur (m1ddc get luminance 2>/dev/null)
-                if test "$ddc_cur" -gt 1 2>/dev/null
-                    echo $ddc_cur > $DDC_SAVE
-                end
+                __save_brightness $BRIGHTNESS $MB_SAVE $DDC_SAVE
 
-                # Disable sync and leave it off — MacBook will be at 0, Samsung stays
-                # bright. Re-enabling here would let MC see the mismatch and dim Samsung.
-                # Sync is restored in `display extend` after brightness is back to normal.
+                # Sync off before the switch so MC doesn't react to it mid-way
                 defaults write $MC_DOMAIN enableBrightnessSync -bool false
-                displayplacer "id:$ULTRA1+$MB res:3440x1440 hz:165 color_depth:8 enabled:true scaling:off origin:(0,0) degree:0"
-                sleep 0.5
-                python3 $BRIGHTNESS set 0
-                m1ddc set luminance (cat $DDC_SAVE) >/dev/null 2>&1
+                if test "$mode" != mirror
+                    displayplacer "id:$ULTRA1+$MB res:3440x1440 hz:165 color_depth:8 enabled:true scaling:off origin:(0,0) degree:0"
+                    sleep 0.5
+                end
+                __dim_mb $BRIGHTNESS $DDC_SAVE $MC_DOMAIN
                 __log_brightness "mirror POST" $BRIGHTNESS $LOGFILE
             else
                 echo "Main ultrawide not connected — nothing to mirror to"

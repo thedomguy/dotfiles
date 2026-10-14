@@ -45,6 +45,10 @@ for name in PureRef alacritty cmux fish flipper gh ghostty git iterm2 jgit \
   symlink_file "$DOTFILES_DIR/$name" "$CONFIG_DIR/$name"
 done
 
+# LaunchAgents: dotfiles repo plist -> ~/Library/LaunchAgents
+# (load once with: launchctl bootstrap gui/$(id -u) <dest>)
+symlink_file "$DOTFILES_DIR/launchd/dev.domguy.display-auto-mirror.plist" "/Users/rahul.bhatt/Library/LaunchAgents/dev.domguy.display-auto-mirror.plist"
+
 # Not managed here (see .gitignore / README for why): coc, configstore,
 # github-copilot, glab-cli, joplin-desktop, raycast, simple-update-notifier
 # — either hold secrets or are pure regenerable cache.
