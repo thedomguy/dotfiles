@@ -1,0 +1,46 @@
+keybind = ctrl+h=goto_split:left
+keybind = ctrl+j=goto_split:down
+keybind = ctrl+k=goto_split:up
+keybind = ctrl+l=goto_split:right
+
+cursor-style = block
+
+# Alacritty config sync
+
+# Font
+font-family = "FiraCode Nerd Font Mono"
+font-size = 16
+
+
+# Window
+background-opacity = 0.95
+background-blur = 20
+
+# Colors
+
+background = "#0d2a34"
+foreground = "#869395"
+
+cursor-color = "#528bff"
+
+selection-background = "#163540"
+selection-foreground = "#95a0a0"
+
+palette = 0=#5c6370
+palette = 1=#e06c75
+palette = 2=#98c379
+palette = 3=#e5c07b
+palette = 4=#61afef
+palette = 5=#c678dd
+palette = 6=#56b6c2
+palette = 7=#828997
+
+palette = 8=#5c6370
+palette = 9=#e06c75
+palette = 10=#98c379
+palette = 11=#e5c07b
+palette = 12=#61afef
+palette = 13=#c678dd
+palette = 14=#56b6c2
+palette = 15=#ffffff
+
