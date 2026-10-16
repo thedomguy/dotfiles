@@ -34,3 +34,6 @@ nvim/pack/
 # state, not portable config); fish_variables* covers both the live
 # file and abandoned atomic-write temp files
 fish/fish_variables*
+
+# Jarvis voice conversation transcripts (personal history, not config)
+jarvis-voice/conversations/
