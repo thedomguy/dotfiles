@@ -158,7 +158,7 @@ end
 
 # Cheatsheet system (see `cheat -l`, `cheat -e <topic>`)
 # =====================
-set -gx CHEATSHEET_DIR ~/personal/dotfiles/cheatsheets
+set -gx CHEATSHEET_DIR ~/personal/dotfiles/mac/cheatsheets
 
 # Obsidian Vault Directories
 # =====================

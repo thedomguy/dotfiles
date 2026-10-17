@@ -3,7 +3,7 @@
 # Creates symlinks in ~ pointing to files in this dotfiles repo.
 # Source of truth lives in the repo; home directory gets symlinks.
 
-DOTFILES_DIR="/Users/rahul.bhatt/personal/dotfiles"
+DOTFILES_DIR="/Users/rahul.bhatt/personal/dotfiles/mac"
 
 symlink_file() {
   local source_file="$1"  # file in dotfiles repo

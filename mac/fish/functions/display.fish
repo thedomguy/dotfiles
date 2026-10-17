@@ -6,7 +6,7 @@ function display --description "Switch display layout: extend | mirror | retina 
     set ULTRA1     "DE8080FB-E78E-4446-A049-494CCC4D6C61"
     set MB         "37D8832A-2D66-02CA-B9F7-8F30A301B230"
     set ULTRA2     "58761370-D24D-45D0-8A87-24945FF477AD"
-    set BRIGHTNESS /Users/rahul.bhatt/personal/dotfiles/scripts/macbook-brightness.py
+    set BRIGHTNESS /Users/rahul.bhatt/personal/dotfiles/mac/scripts/macbook-brightness.py
     set LOGFILE    /tmp/display-brightness.log
     # Saved brightness persists across mirror→extend so extend always restores correctly
     set MB_SAVE    /tmp/display-mb-brightness

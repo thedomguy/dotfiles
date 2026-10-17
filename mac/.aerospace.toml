@@ -182,7 +182,7 @@ on-mode-changed = []
 
     # Collapse any stray workspace above 10 back into 1..10 (e.g. 12 -> 2).
     # Windows are moved quietly; emptied stray workspaces then disappear.
-    alt-shift-c = 'exec-and-forget /Users/rahul.bhatt/personal/dotfiles/scripts/aerospace-collapse-workspaces.sh'
+    alt-shift-c = 'exec-and-forget /Users/rahul.bhatt/personal/dotfiles/mac/scripts/aerospace-collapse-workspaces.sh'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'

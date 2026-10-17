@@ -1,7 +1,7 @@
 function cheat -d "View, list, or edit cheatsheets in $CHEATSHEET_DIR"
     set -l dir $CHEATSHEET_DIR
     if not set -q dir[1]
-        set dir ~/personal/dotfiles/cheatsheets
+        set dir ~/personal/dotfiles/mac/cheatsheets
     end
 
     switch "$argv[1]"

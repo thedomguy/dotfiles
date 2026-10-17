@@ -5,13 +5,13 @@
 // Started by the dev.domguy.display-auto-mirror LaunchAgent.
 //
 // Build (needs re-running after edits):
-//   swiftc -O -o ~/.local/bin/display-watcher ~/personal/dotfiles/scripts/display-watcher.swift
+//   swiftc -O -o ~/.local/bin/display-watcher ~/personal/dotfiles/mac/scripts/display-watcher.swift
 
 import AppKit
 import CoreGraphics
 import SwiftUI
 
-let script = "/Users/rahul.bhatt/personal/dotfiles/scripts/display-auto-mirror.sh"
+let script = "/Users/rahul.bhatt/personal/dotfiles/mac/scripts/display-auto-mirror.sh"
 let ultrawideUUID = "DE8080FB-E78E-4446-A049-494CCC4D6C61"  // ULTRA1 in display.fish
 let darkLevel: Float = 0.01     // at or below this the panel counts as off
 let unpluggedLevel: Float = 0.5 // MacBook brightness once the ultrawide is gone
