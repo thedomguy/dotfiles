@@ -4,14 +4,25 @@ This repository holds the real content of my dotfiles. `$HOME` and
 `~/.config` get symbolic links pointing into this repo — the repo is the
 source of truth, not the other way around.
 
+## Layout
+
+Configs are grouped by OS:
+
+| Dir | Contents |
+| :--- | :--- |
+| `mac/` | macOS dotfiles, app config, `scripts/`, `Brewfile`, `cheatsheets/` (everything documented below) |
+| `omarchy-arch/` | Linux (Omarchy/Arch) dotfiles — see its own `README.md` |
+
+All paths below are relative to `mac/` unless stated otherwise.
+
 ## Setup and Management
 
-The symbolic links are managed by the script in `scripts/manage_symlinks.sh`.
+The symbolic links are managed by the script in `mac/scripts/manage_symlinks.sh`.
 
 To (re)create the symlinks on a machine, run from the root of this repository:
 
 ```bash
-./scripts/manage_symlinks.sh
+./mac/scripts/manage_symlinks.sh
 ```
 
 The script will prompt you for any conflicts or decisions that need to be made.
@@ -104,17 +115,17 @@ These live outside the repo entirely and are deliberately not copied in:
 
 ## Packages
 
-`Brewfile` lists Homebrew formulae, casks, taps and VS Code extensions.
-Install everything with `brew bundle --file=Brewfile`; refresh it with
-`brew bundle dump --file=Brewfile --force`.
+`mac/Brewfile` lists Homebrew formulae, casks, taps and VS Code extensions.
+Install everything with `brew bundle --file=mac/Brewfile`; refresh it with
+`brew bundle dump --file=mac/Brewfile --force`.
 
 ## Cheatsheets
 
-`cheatsheets/` holds topic-based markdown cheatsheets (`fish.md`, `git.md`,
+`mac/cheatsheets/` holds topic-based markdown cheatsheets (`fish.md`, `git.md`,
 …) for quick recall in the terminal — see `cheat -l` / `cheat <topic>` /
-`cheat -e <topic>` (defined in `fish/functions/cheat.fish`). Feel free to
+`cheat -e <topic>` (defined in `mac/fish/functions/cheat.fish`). Feel free to
 have an AI coding assistant keep these current as workflows change.
 
-- [fish](cheatsheets/fish.md)
-- [git](cheatsheets/git.md)
-- [_template](cheatsheets/_template.md) — scaffold for a new topic
+- [fish](mac/cheatsheets/fish.md)
+- [git](mac/cheatsheets/git.md)
+- [_template](mac/cheatsheets/_template.md) — scaffold for a new topic
