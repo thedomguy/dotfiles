@@ -1,0 +1,4 @@
+#!/bin/sh
+# macOS `open` shim for Linux (used by lf, nvim, fish abbreviations).
+[ "$1" = "-a" ] || [ "$1" = "-na" ] && shift 2
+exec xdg-open "$@"

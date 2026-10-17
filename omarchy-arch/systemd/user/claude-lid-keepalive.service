@@ -1,0 +1,7 @@
+[Unit]
+Description=Block lid-close suspend on AC power while Claude Code sessions are running
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/claude-lid-keepalive run
+ExecStopPost=%h/.local/bin/claude-lid-keepalive restore

@@ -1,0 +1,155 @@
+#!/usr/bin/env bash
+# Keep the laptop awake with the lid closed while Claude Code sessions are alive.
+#
+#   hook-start   SessionStart hook: reads hook JSON on stdin, registers the session
+#   hook-end     SessionEnd hook: unregisters the session
+#   start [id] [pid]   register manually (pid defaults to the enclosing claude process)
+#   stop  [id]         unregister manually
+#   run          service body: holds the lid block while a session is alive AND on AC
+#   blank        turn the display off (any key/mouse wakes it, no password)
+#   restore      give Omarchy idle lock/screensaver back if we suspended it
+#   status       show registered sessions and whether the inhibitor is held
+set -u
+
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/claude-lid/sessions"
+UNIT=claude-lid-keepalive.service
+mkdir -p "$STATE"
+
+claude_pid() {
+  local p=$$
+  while [ "$p" -gt 1 ]; do
+    if [ "$(cat "/proc/$p/comm" 2>/dev/null)" = claude ]; then
+      echo "$p"
+      return 0
+    fi
+    p=$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')
+    [ -n "$p" ] || break
+  done
+  return 1
+}
+
+on_ac() {
+  local d
+  for d in /sys/class/power_supply/*; do
+    [ "$(cat "$d/type" 2>/dev/null)" = Battery ] && continue
+    [ "$(cat "$d/online" 2>/dev/null)" = 1 ] && return 0
+  done
+  return 1
+}
+
+lid_closed() {
+  grep -qs closed /proc/acpi/button/lid/*/state
+}
+
+IDLE=/usr/share/omarchy/bin/omarchy-toggle-idle
+MARK="$(dirname "$STATE")/suspended-idle"
+
+hold_idle() {
+  # Omarchy's own idle screensaver/lock would light the screen and ask for a password.
+  [ -e "$MARK" ] && return 0
+  # stay-awake already on (the user's own choice) -> leave it alone
+  [ -e "$HOME/.local/state/omarchy/indicators/stay-awake" ] && return 0
+  "$IDLE" stay-awake >/dev/null && touch "$MARK"
+}
+
+restore_idle() {
+  [ -e "$MARK" ] || return 0
+  "$IDLE" allow-idle >/dev/null
+  rm -f "$MARK"
+}
+
+prune() {
+  local f pid
+  for f in "$STATE"/*; do
+    [ -e "$f" ] || continue
+    pid=$(cat "$f" 2>/dev/null)
+    if [ -z "$pid" ] || ! kill -0 "$pid" 2>/dev/null; then
+      rm -f "$f"
+    fi
+  done
+}
+
+count() {
+  prune
+  find "$STATE" -type f 2>/dev/null | wc -l
+}
+
+register() {
+  local id="$1" pid="${2:-}"
+  [ -n "$pid" ] || pid=$(claude_pid) || pid=$PPID
+  echo "$pid" > "$STATE/$id"
+  systemctl --user start "$UNIT"
+}
+
+# Everything runs from main so bash parses the whole script before executing it;
+# editing this file while the service runs then cannot corrupt the running copy.
+main() {
+case "${1:-status}" in
+  hook-start)
+    id=$(jq -r '.session_id // empty')
+    [ -n "$id" ] && register "$id"
+    ;;
+  hook-end)
+    id=$(jq -r '.session_id // empty')
+    [ -n "$id" ] && rm -f "$STATE/$id"
+    ;;
+  start)
+    register "${2:-manual-$$}" "${3:-}"
+    ;;
+  stop)
+    rm -f "$STATE/${2:-}"
+    ;;
+  run)
+    inhibitor=
+    was_ac=1
+    release() {
+      [ -n "$inhibitor" ] && kill "$inhibitor" 2>/dev/null
+      inhibitor=
+      restore_idle
+    }
+    trap 'release; exit 0' TERM INT
+    while [ "$(count)" -gt 0 ]; do
+      if on_ac; then
+        if [ -z "$inhibitor" ] || ! kill -0 "$inhibitor" 2>/dev/null; then
+          systemd-inhibit --what=handle-lid-switch --who="Claude Code" \
+            --why="Claude session active (AC power)" --mode=block sleep infinity &
+          inhibitor=$!
+        fi
+        hold_idle
+        was_ac=1
+      else
+        release
+        # logind ignored the lid event while we held the block; if the lid is
+        # still shut after unplugging, suspend now instead of draining the battery.
+        if [ "$was_ac" = 1 ] && lid_closed; then
+          systemctl suspend
+        fi
+        was_ac=0
+      fi
+      sleep 2
+    done
+    release
+    ;;
+  blank)
+    # let the key that triggered us be released first, or its release wakes the screen
+    sleep 1
+    hyprctl dispatch 'hl.dsp.dpms({ action = "off" })' >/dev/null 2>&1 || hyprctl dispatch dpms off >/dev/null
+    ;;
+  restore)
+    restore_idle
+    ;;
+  status)
+    echo "sessions: $(count)"
+    for f in "$STATE"/*; do [ -e "$f" ] && echo "  $(basename "$f") pid=$(cat "$f")"; done
+    systemctl --user is-active "$UNIT"
+    systemd-inhibit --list 2>/dev/null | grep -i 'handle-lid-switch' || echo "no lid inhibitor held"
+    ;;
+  *)
+    echo "usage: $0 {hook-start|hook-end|start|stop|run|status}" >&2
+    exit 2
+    ;;
+esac
+}
+
+main "$@"
+exit 0

@@ -1,0 +1,9 @@
+# Aliases from the macOS ~/.gitconfig worth keeping. Included from ~/.gitconfig by install.sh.
+[alias]
+	mr = !sh -c 'git fetch $1 merge-requests/$2/head:mr-$1-$2 && git checkout mr-$1-$2' -
+	local = log --oneline --graph --decorate --branches --not --remotes
+	sync = "!f() { git fetch --prune; for b in $(git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" { print $1 }'); do [ \"$b\" = \"$(git branch --show-current)\" ] && echo \"skip $b (checked out)\" || git branch -D \"$b\"; done; }; f"
+[core]
+	editor = nvim
+[fetch]
+	prune = true
