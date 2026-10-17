@@ -29,6 +29,10 @@ cmd open ${{
 # Toggle hidden files
 map . set hidden!
 
+# Delete file kep map x instead of having to type delete
+
+map x delete 
+
 # Quit on enter to change directory in the shell
 map <enter> quit
 # Open under cursor: dir -> enter, file -> $EDITOR (see `cmd open` above)
