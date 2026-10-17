@@ -15,7 +15,7 @@ symlink_file() {
     read -p "$(basename "$dest_file") already exists at $dest_file. Overwrite? (y/n) " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-      ln -sf "$source_file" "$dest_file"
+      ln -sfn "$source_file" "$dest_file"
       echo "Overwrote symlink: $dest_file -> $source_file"
     else
       echo "Skipped: $dest_file"
@@ -48,6 +48,11 @@ symlink_file "$DOTFILES_DIR/personal.gitconfig" "/Users/rahul.bhatt/personal/.gi
 # Single files inside app dirs that also hold state/credentials we don't track
 symlink_file "$DOTFILES_DIR/hammerspoon/init.lua" "/Users/rahul.bhatt/.hammerspoon/init.lua"
 symlink_file "$DOTFILES_DIR/gemini/GEMINI.md"     "/Users/rahul.bhatt/.gemini/GEMINI.md"
+
+# Ghostty also reads its macOS App Support dir, which takes precedence
+GHOSTTY_SUPPORT="/Users/rahul.bhatt/Library/Application Support/com.mitchellh.ghostty"
+symlink_file "$DOTFILES_DIR/ghostty/config" "$GHOSTTY_SUPPORT/config"
+symlink_file "$DOTFILES_DIR/ghostty/config" "$GHOSTTY_SUPPORT/config.ghostty"
 
 # Pairs: dotfiles repo dir -> ~/.config destination
 CONFIG_DIR="/Users/rahul.bhatt/.config"

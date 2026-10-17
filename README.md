@@ -50,6 +50,8 @@ The script will prompt you for any conflicts or decisions that need to be made.
 | `personal.gitconfig` | `~/personal/.gitconfig` |
 | `hammerspoon/init.lua` | `~/.hammerspoon/init.lua` |
 | `gemini/GEMINI.md` | `~/.gemini/GEMINI.md` |
+| `ghostty/config` | `~/Library/Application Support/com.mitchellh.ghostty/config` and `config.ghostty` (Ghostty reads these before `~/.config/ghostty`) |
+| `launchd/dev.domguy.display-auto-mirror.plist` | `~/Library/LaunchAgents/dev.domguy.display-auto-mirror.plist` |
 
 ### Managed app config (`~/.config`)
 

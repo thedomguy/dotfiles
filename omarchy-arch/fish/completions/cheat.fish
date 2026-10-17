@@ -1,7 +1,7 @@
 function __cheat_topics
     set -l dir $CHEATSHEET_DIR
     if not set -q dir[1]
-        set dir ~/personal/dotfiles/cheatsheets
+        set dir ~/personal/dotfiles/mac/cheatsheets
     end
     find $dir -name '*.md' ! -name '_template.md' -exec basename {} .md \; 2>/dev/null
 end

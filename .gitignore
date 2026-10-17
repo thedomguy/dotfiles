@@ -28,12 +28,12 @@ simple-update-notifier
 
 # --- Partial excludes within migrated dirs ---
 # Regenerable plugin installs, not hand-authored config
-nvim/pack/
+mac/nvim/pack/
 
 # fish's universal-variable temp/state files (machine-specific runtime
 # state, not portable config); fish_variables* covers both the live
 # file and abandoned atomic-write temp files
-fish/fish_variables*
+mac/fish/fish_variables*
 
 # Jarvis voice conversation transcripts (personal history, not config)
-jarvis-voice/conversations/
+mac/jarvis-voice/conversations/
