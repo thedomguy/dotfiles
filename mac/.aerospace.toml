@@ -9,10 +9,11 @@ config-version = 2
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 
 # Start AeroSpace at login
-start-at-login = false
+start-at-login = true
 
 after-startup-command = [
-  'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=4.0 style=square'
+  'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=4.0 style=square',
+  'exec-and-forget /Users/rahul.bhatt/personal/dotfiles/mac/scripts/aerospace-session-restore.py prompt'
 ]
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
@@ -48,27 +49,41 @@ automatically-unhide-macos-hidden-apps = false
 # even when they are invisible.
 # This config version is only available since 'config-version = 2'
 # Fallback value (if you omit the key): persistent-workspaces = []
-persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "ipad"]
+persistent-workspaces = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "ipad"]
+
+# Hard cap at 9: every display gets a named workspace below, so AeroSpace never
+# has to invent "10", "11"... (no alt-<n> key can reach those). If one still
+# appears, its windows are moved back into 1..9 on every workspace switch.
+exec-on-workspace-change = ['/bin/bash', '-c',
+  '/Users/rahul.bhatt/personal/dotfiles/mac/scripts/aerospace-collapse-workspaces.sh'
+]
+
+# The aerospace CLI lives in ~/.local/bin: AeroSpace is a self-built fork
+# (~/personal/mac-utils/AeroSpace, focus fix for upstream #101), not the Homebrew cask.
+# exec-* commands and callbacks only get /opt/homebrew/bin by default.
+[exec.env-vars]
+    PATH = '${HOME}/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
 
 # Assign workspaces to monitors
 # See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
-# Monitor name reference (as of config authoring):
-#   Samsung LC34G55T  → main display  (primary)
-#   LG HDR WFHD       → LG display    (workspace 6)
-#   Built-in Retina Display → Retina  (workspace 7, built-in MacBook display)
-#   Sidecar Display (AirPlay) → iPad extended display (workspace 'ipad', alt-i)
+#   0    -> Built-in Retina Display (falls back to main when mirrored / lid closed)
+#   1..8 -> main display (Samsung LC34G55T)
+#   9    -> LG HDR WFHD (falls back to main when the LG isn't attached)
+#   ipad -> Sidecar Display (falls back to main)
+# Each display must match some workspace here, otherwise AeroSpace creates a
+# new numbered one (10, 11...) for it.
 [workspace-to-monitor-force-assignment]
-    "1"  = ['main']
-    "2"  = ['main']
-    "3"  = ['main']
-    "4"  = ['main']
-    "5"  = ['main']
-    "6"  = ['main']
-    "7"  = ['main']
-    "8"  = ['main']
-    "9"  = ['(?i)lg hdr', 'main', '.*']
-    "10"  = ['Built-in Retina Display', 'main', '.*']
-    "ipad" = ['(?i)sidecar', 'main', '.*']
+    "0"    = ['(?i)built-in', 'main']
+    "1"    = 'main'
+    "2"    = 'main'
+    "3"    = 'main'
+    "4"    = 'main'
+    "5"    = 'main'
+    "6"    = 'main'
+    "7"    = 'main'
+    "8"    = 'main'
+    "9"    = ['(?i)^lg', 'main']
+    "ipad" = ['(?i)sidecar', 'main']
 
 # A callback that runs every time binding mode changes
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -150,6 +165,7 @@ on-mode-changed = []
     alt-shift-minus = 'resize smart -500'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
+    alt-0 = 'workspace 0'
     alt-1 = 'workspace 1'
     alt-2 = 'workspace 2'
     alt-3 = 'workspace 3'
@@ -159,10 +175,10 @@ on-mode-changed = []
     alt-7 = 'workspace 7'
     alt-8 = 'workspace 8'
     alt-9 = 'workspace 9'
-    alt-0 = 'workspace 10'
     alt-i = 'workspace ipad'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
+    alt-shift-0 = 'move-node-to-workspace 0'
     alt-shift-1 = 'move-node-to-workspace 1'
     alt-shift-2 = 'move-node-to-workspace 2'
     alt-shift-3 = 'move-node-to-workspace 3'
@@ -172,7 +188,6 @@ on-mode-changed = []
     alt-shift-7 = 'move-node-to-workspace 7'
     alt-shift-8 = 'move-node-to-workspace 8'
     alt-shift-9 = 'move-node-to-workspace 9'
-    alt-shift-0 = 'move-node-to-workspace 10'
     alt-shift-i = 'move-node-to-workspace ipad'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
@@ -180,9 +195,12 @@ on-mode-changed = []
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
     alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
-    # Collapse any stray workspace above 10 back into 1..10 (e.g. 12 -> 2).
+    # Collapse any stray workspace above 9 back into 1..9 (e.g. 11 -> 2).
+    # Also runs automatically via exec-on-workspace-change.
     # Windows are moved quietly; emptied stray workspaces then disappear.
     alt-shift-c = 'exec-and-forget /Users/rahul.bhatt/personal/dotfiles/mac/scripts/aerospace-collapse-workspaces.sh'
+    alt-shift-r = 'exec-and-forget /Users/rahul.bhatt/personal/dotfiles/mac/scripts/aerospace-session-restore.py prompt'
+    alt-r = 'exec-and-forget /Users/rahul.bhatt/personal/dotfiles/mac/scripts/aerospace-session-restore.py prompt'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
@@ -218,7 +236,7 @@ on-mode-changed = []
     q = ['exec-and-forget killall borders', 'exec-and-forget killall AeroSpace']
 
 # Sign-in windows spawned by apps and browsers (e.g. "Sign in - Google Accounts").
-# \b word boundaries keep this off Design / assign / signature.
+# boundaries keep this off Design / assign / signature.
 [[on-window-detected]]
 if.window-title-regex-substring = '(?i)\bsign[ -]?in\b'
 run = ['layout floating']
@@ -227,9 +245,9 @@ run = ['layout floating']
 if.app-name-regex-substring = 'teams'
 run = 'layout floating'
 
-[[on-window-detected]]
-if.app-name-regex-substring = 'word'
-run = 'layout floating'
+# [[on-window-detected]]
+# if.app-name-regex-substring = 'word'
+# run = 'layout floating'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'excel'
@@ -326,5 +344,10 @@ run = 'layout floating'
 
 [[on-window-detected]]
 if.window-title-regex-substring = 'Latest'
+run = 'layout floating'
+
+# Keep the restore confirmation dialog out of the tiling tree.
+[[on-window-detected]]
+if.window-title-regex-substring = '(?i)AeroSpace Snapshot Restore'
 run = 'layout floating'
 

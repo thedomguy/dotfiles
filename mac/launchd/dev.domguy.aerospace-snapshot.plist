@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>dev.domguy.aerospace-snapshot</string>
+
+    <!-- AeroSpace has no quit hook, so save the live layout every 2 minutes.
+         No RunAtLoad: the first save waits so it can't overwrite the saved
+         layout before the login restore prompt has been answered. -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/rahul.bhatt/personal/dotfiles/mac/scripts/aerospace-session-restore.py</string>
+        <string>save</string>
+    </array>
+
+    <key>StartInterval</key>
+    <integer>120</integer>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/aerospace-snapshot.log</string>
+</dict>
+</plist>
