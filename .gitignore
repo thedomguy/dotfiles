@@ -37,3 +37,10 @@ mac/fish/fish_variables*
 
 # Jarvis voice conversation transcripts (personal history, not config)
 mac/jarvis-voice/conversations/
+
+# Media (videos/images) lives outside the repo in ~/personal/dotfiles-media
+themes/**/*.mp4
+themes/**/*.png
+themes/**/*.jpg
+themes/**/*.jpeg
+themes/**/*.webp
